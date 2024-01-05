@@ -1,6 +1,8 @@
 import { useReducer, useMemo } from "react";
 import { createContext, useContext } from "react";
-// import { getAddresses } from './walletService';
+import { getInjectiveAddress } from "@injectivelabs/sdk-ts";
+import { getAddresses } from "../services/walletService";
+import { tips } from "../util";
 
 const INIT_STATE: InitStateObject = {
   loading: false,
@@ -46,13 +48,23 @@ const ContextProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(reducer, INIT_STATE);
 
   const connectWallet = async () => {
-    if (state.injectiveAddress) {
+    try {
+      if (state.injectiveAddress) {
+        dispatch({ type: "ethereumAddress", payload: "" });
+        dispatch({ type: "injectiveAddress", payload: "" });
+        return;
+      }
+
+      const [address] = await getAddresses();
+      const injectiveAddress = getInjectiveAddress(address);
+
+      dispatch({ type: "ethereumAddress", payload: address });
+      dispatch({ type: "injectiveAddress", payload: injectiveAddress });
+    } catch (err: any) {
+      tips("warning", "Wallet connect failed!");
       dispatch({ type: "ethereumAddress", payload: "" });
       dispatch({ type: "injectiveAddress", payload: "" });
-      return;
     }
-
-    // const [address] = await getAddresses();
   }
 
   return (

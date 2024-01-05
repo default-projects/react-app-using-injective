@@ -1,16 +1,19 @@
-import { Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { Stack, Typography } from "@mui/material";
+
+import { useGlobalContext } from "../provider";
+import { textEllipsis } from "../util";
 
 const Dashboard = () => {
-  const onConnect = () => {
-    console.log("metamask connect")
-  }
+  const [state, { connectWallet }] = useGlobalContext();
 
   return (
     <DashboardWrapper>
       <Stack direction="row" justifyContent="end">
-        <WalletConnectBtn onClick={onConnect}>
-          <Typography variant="h5">Connect</Typography>
+        <WalletConnectBtn onClick={connectWallet}>
+          <Typography variant="h5">
+            {state.injectiveAddress ? textEllipsis(state.injectiveAddress) : "Wallet Connect"}
+          </Typography>
         </WalletConnectBtn>
       </Stack>
     </DashboardWrapper>

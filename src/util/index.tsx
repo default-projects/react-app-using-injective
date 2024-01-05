@@ -46,5 +46,19 @@ const delay = (ms: number) => {
   return new Promise(res => setTimeout(res, ms));
 }
 
+const textEllipsis = (text: string, start: number = 5, end: number = 5) => {
+  if (text.length > (start + end)) {
+    return `${text.slice(0, start)}...${text.slice(-1 * end)}`
+  }
 
-export { Now, tips, textCopy, delay };
+  return text;
+}
+
+
+export {
+  Now,
+  tips,
+  textCopy,
+  delay,
+  textEllipsis
+}
