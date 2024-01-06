@@ -43,18 +43,18 @@ const HeaderWrapper = styled(Stack)<{ sticky: boolean }>(({ sticky }) => ({
 }))
 
 const HeaderContainer = styled(GlobalSpacing)(({ theme }) => ({
-  height: 80,
+  height: 90,
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
 
   [theme.breakpoints.down("lg")]: {
-    height: 70,
+    height: 80,
   },
 
   [theme.breakpoints.down("md")]: {
-    height: 60,
+    height: 70,
   },
 }))
 
@@ -76,7 +76,7 @@ const LogoWrapper = styled(Link)({
 })
 
 const ConnectButton = styled(Stack)(({ theme }) => ({
-  padding: '10px 20px',
+  padding: '12px 25px',
   borderLeftWidth: 1,
   borderRightWidth: 1,
   borderColor: theme.palette.common.buttonBg,
@@ -100,11 +100,11 @@ const ConnectButton = styled(Stack)(({ theme }) => ({
   },
 
   [theme.breakpoints.down('lg')]: {
-    padding: '8px 15px',
+    padding: '10px 20px',
   },
 
   [theme.breakpoints.down('md')]: {
-    padding: '5px 10px',
+    padding: '8px 15px',
   },
 }))
 
