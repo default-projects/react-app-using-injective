@@ -1,4 +1,4 @@
-import { WalletStrategy } from "@injectivelabs/wallet-ts";
+import { Wallet, WalletStrategy } from "@injectivelabs/wallet-ts";
 import { Web3Exception } from "@injectivelabs/exceptions";
 import { config } from "../config";
 
@@ -7,7 +7,8 @@ const walletStrategy = new WalletStrategy({
   ethereumOptions: {
     ethereumChainId: config.ETHEREUM_CHAIN_ID,
     rpcUrl: config.alchemyRpcEndpoint,
-  }
+  },
+  // wallet: Wallet.Keplr,
 })
 
 const getAddresses = async (): Promise<string[]> => {

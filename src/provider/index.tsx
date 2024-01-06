@@ -56,10 +56,10 @@ const ContextProvider = ({ children }: any) => {
       }
 
       const [address] = await getAddresses();
-      const injectiveAddress = getInjectiveAddress(address);
+      const injectiveAddres = getInjectiveAddress(address);
 
       dispatch({ type: "ethereumAddress", payload: address });
-      dispatch({ type: "injectiveAddress", payload: injectiveAddress });
+      dispatch({ type: "injectiveAddress", payload: injectiveAddres });
     } catch (err: any) {
       tips("warning", "Wallet connect failed!");
       dispatch({ type: "ethereumAddress", payload: "" });
