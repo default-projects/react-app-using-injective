@@ -22,9 +22,16 @@ const Header = ({ sticky }: HeaderProps) => {
           <Typography variant="h3">INJECTIVE</Typography>
         </LogoWrapper>
 
+        {state.walletStatus === 2 && (
+          <Stack gap={1} direction="row" alignItems="center">
+            <Typography variant="body1">Balance : </Typography>
+            <Typography variant="body1">{Number(state.balance.toFixed(3))} inj</Typography>
+          </Stack>
+        )}
+
         <ConnectButton onClick={connectWallet}>
           <Typography variant="h6">
-            {state.injectiveAddress ? textEllipsis(state.injectiveAddress) : "Wallet Connect"}
+            {state.walletStatus === 0 ? "Wallet Install" : (state.walletStatus === 1 ? "Wallet Connect" : textEllipsis(state.injectiveAddress))}
           </Typography>
         </ConnectButton>
       </HeaderContainer>

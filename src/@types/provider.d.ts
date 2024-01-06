@@ -5,6 +5,8 @@ interface ReducerObject {
 
 interface InitStateObject {
   loading: boolean
+
+  balance: number
   injectiveAddress: string
-  ethereumAddress: string
+  walletStatus: number
 }

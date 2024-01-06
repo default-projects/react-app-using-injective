@@ -1,13 +1,19 @@
-import { useReducer, useMemo } from "react";
 import { createContext, useContext } from "react";
-import { getInjectiveAddress } from "@injectivelabs/sdk-ts";
-import { getAddresses } from "../services/walletService";
+import { useReducer, useMemo, useEffect } from "react";
+import { ChainGrpcBankApi } from "@injectivelabs/sdk-ts";
+
 import { tips } from "../util";
+import { config } from "../config";
+import { bigNumToNumber } from "../services/blockchain";
+import { detectKeplrProvider, onWalletConnect } from "../services/walletService";
+const walletStore = 'https://chrome.google.com/webstore/detail/dmkamcknogkgcdfhhbddcghachkejeap';
 
 const INIT_STATE: InitStateObject = {
   loading: false,
+
+  balance: 0,
   injectiveAddress: "",
-  ethereumAddress: "",
+  walletStatus: 0, // 0: no wallet detect, 1: not connected, 2: connected
 }
 
 // create context
@@ -47,25 +53,53 @@ function useGlobalContext() {
 const ContextProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(reducer, INIT_STATE);
 
+  // blockchain actions start
+  const walletStatusDetect = async () => {
+    let tempStatus = 0;
+    let provider = await detectKeplrProvider();
+    if (provider) tempStatus = 1;
+
+
+    if (state.walletStatus !== tempStatus) {
+      dispatch({ type: "walletStatus", payload: tempStatus });
+    }
+  }
+  // blockchain actions end
+
+  // wallet section start
+  useEffect(() => {
+    (async () => {
+      if (state.injectiveAddress) {
+        const chainGrpcBankApi = new ChainGrpcBankApi(config.EndPoint.grpc);
+        dispatch({ type: "walletStatus", payload: 2 });
+
+        const data = { accountAddress: state.injectiveAddress, denom: 'inj' };
+        const balance = await chainGrpcBankApi.fetchBalance(data);
+        const amount = bigNumToNumber(balance.amount);
+        dispatch({ type: "balance", payload: amount });
+      } else {
+        await walletStatusDetect();
+        dispatch({ type: "balance", payload: 0 });
+      }
+    })()
+  }, [state.injectiveAddress])
+
   const connectWallet = async () => {
     try {
-      if (state.injectiveAddress) {
-        dispatch({ type: "ethereumAddress", payload: "" });
+      if (state.walletStatus === 0) {
+        window.open(walletStore, "_blank");
+      } else if (state.walletStatus === 2) {
         dispatch({ type: "injectiveAddress", payload: "" });
-        return;
+      } else {
+        const [address] = await onWalletConnect();
+        dispatch({ type: "injectiveAddress", payload: address });
       }
-
-      const [address] = await getAddresses();
-      const injectiveAddres = getInjectiveAddress(address);
-
-      dispatch({ type: "ethereumAddress", payload: address });
-      dispatch({ type: "injectiveAddress", payload: injectiveAddres });
     } catch (err: any) {
-      tips("warning", "Wallet connect failed!");
-      dispatch({ type: "ethereumAddress", payload: "" });
+      tips("warning", "Wallet  connectfailed!");
       dispatch({ type: "injectiveAddress", payload: "" });
     }
   }
+  // wallet section end
 
   return (
     <GlobalContext.Provider
