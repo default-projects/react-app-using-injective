@@ -52,6 +52,7 @@ const Dashboard = () => {
       dispatch({ type: "loading", payload: false });
       getCounter();
     } catch (err: any) {
+      tips("error", "Update counter failed!");
       dispatch({ type: "loading", payload: false });
     }
   }
