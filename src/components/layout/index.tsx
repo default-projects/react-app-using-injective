@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import { Header } from "./header";
 
-const Layout = () => {
+const Layout = ({ children }: any) => {
   const [sticky, setSticky] = useState<boolean>(false);
 
   useEffect(() => {
@@ -22,8 +22,7 @@ const Layout = () => {
   return (
     <LayoutWrapper>
       <Header sticky={sticky} />
-
-      <div style={{ height: '200vh' }}></div>
+      {children}
     </LayoutWrapper>
   )
 }
@@ -32,6 +31,15 @@ const LayoutWrapper = styled('div')(({ theme }) => ({
   minHeight: '100vh',
   overflowX: "hidden",
   backgroundColor: theme.palette.common.mainBg,
+  paddingTop: 90,
+
+  [theme.breakpoints.down("lg")]: {
+    paddingTop: 80,
+  },
+
+  [theme.breakpoints.down("md")]: {
+    paddingTop: 70,
+  },
 }))
 
 export { Layout };

@@ -5,7 +5,7 @@ import { ChainGrpcBankApi } from "@injectivelabs/sdk-ts";
 import { tips } from "../util";
 import { config } from "../config";
 import { bigNumToNumber } from "../services/blockchain";
-import { detectKeplrProvider, onWalletConnect } from "../services/walletService";
+import { detectKeplrProvider, onWalletConnect, walletStrategy } from "../services/walletService";
 const walletStore = 'https://chrome.google.com/webstore/detail/dmkamcknogkgcdfhhbddcghachkejeap';
 
 const INIT_STATE: InitStateObject = {
@@ -69,6 +69,13 @@ const ContextProvider = ({ children }: any) => {
   // wallet section start
   useEffect(() => {
     (async () => {
+      const [address] = await onWalletConnect();
+      dispatch({ type: "injectiveAddress", payload: address });
+    })()
+  }, [])
+
+  useEffect(() => {
+    (async () => {
       if (state.injectiveAddress) {
         const chainGrpcBankApi = new ChainGrpcBankApi(config.EndPoint.grpc);
         dispatch({ type: "walletStatus", payload: 2 });
@@ -91,11 +98,15 @@ const ContextProvider = ({ children }: any) => {
       } else if (state.walletStatus === 2) {
         dispatch({ type: "injectiveAddress", payload: "" });
       } else {
+        dispatch({ type: "loading", payload: true });
+
         const [address] = await onWalletConnect();
+        dispatch({ type: "loading", payload: false });
         dispatch({ type: "injectiveAddress", payload: address });
       }
     } catch (err: any) {
       tips("warning", "Wallet  connectfailed!");
+      dispatch({ type: "loading", payload: false });
       dispatch({ type: "injectiveAddress", payload: "" });
     }
   }
